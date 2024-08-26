@@ -1,0 +1,63 @@
+--How many orders were placed in January?
+
+SELECT COUNT(orderID) AS NumberOfOrders
+FROM BIT_DB.JanSales
+--This is used to clean up any messy entries in the table
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID';
+
+--How many of those orders were for an iPhone?
+
+SELECT COUNT(orderID) AS NumberOfOrders
+FROM BIT_DB.JanSales
+--This is used to clean up any messy entries in the table
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+AND Product = 'iPhone';
+
+--Select the customer account numbers for all the orders that were placed in February
+
+SELECT DISTINCT acctnum
+FROM BIT_DB.customers
+INNER JOIN BIT_DB.FebSales 
+ON customers.order_id = FebSales.orderID
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID';
+
+--Which product was the cheapest one sold in January, and what was the price?
+
+SELECT distinct product, MIN(price)
+FROM BIT_DB.JanSales
+GROUP BY product, price
+ORDER BY price ASC LIMIT 1;
+
+--What is the total revenue for each product sold in January?
+
+SELECT DISTINCT product, SUM(quantity)*price AS Revenue
+FROM BIT_DB.JanSales
+WHERE product <> ' '
+AND product IS NOT NULL
+AND product <> 'Product'
+GROUP BY product;
+
+--Which products were sold in February at 548 Lincoln St, Seatlle, WA 98101, how many 
+--of each were sold, and what was the total revenue?
+
+SELECT product, SUM(quantity) AS Quantity, SUM(quantity)*price AS Revenue
+FROM BIT_DB.FebSales
+WHERE product <> ' '
+AND product IS NOT NULL
+AND product <> 'Product'
+AND location = '548 Lincoln St, Seattle, WA 98101'
+GROUP BY product;
+
+--How many customers ordered more than 2 products at a time in February, and what was 
+--the average amount spent for those customers?
+
+SELECT COUNT(*), AVG(Quantity*price)
+FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON FebSales.orderID = customers.order_id
+WHERE length(orderID) = 6
+AND orderID <> 'Order ID'
+AND FebSales.Quantity > 2;
