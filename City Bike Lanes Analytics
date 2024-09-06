@@ -7,7 +7,7 @@ year_updated year not null,
 street varchar not null,
 width_feet integer not null,
 safetyrating integer not null,
-protected varchar not null)
+protected varchar not null);
 
 INSERT INTO BIT_DB.CityBikeLanes values(1,2012, 2020, "Chestnut",4,4,"yes");
 INSERT INTO BIT_DB.CityBikeLanes values(2,2016, 2020,"Walnut",4,3.8,"yes");
@@ -85,3 +85,9 @@ GROUP BY street)
 SELECT street, AvgSafety, 'Safe Lane' as 'label'
 FROM TempTable
 WHERE AvgSafety >= 4.0;
+
+--take the average of safetyrating over the entire result set, partitioned by street
+
+SELECT street, safetyrating,
+AVG(safetyrating) OVER (PARTITION BY street) as "Average_safety_rating"
+FROM CityBikeLanes;
